@@ -8,11 +8,11 @@ Model — View — ViewModel (MVVM) is the industry-recognized software architec
   * Add note
   * Edit note
   * Delete note
+  * Search note
  
- Add Note | Edit Note | Delete Note
------------- | ------------- | -------------
-![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/79650580/142613895-d834e20d-75c7-4020-9a3f-5a356098827e.gif) | ![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/79650580/142613503-0a824ade-913d-4c39-acc5-52862417b8ff.gif) | ![ezgif com-gif-maker (3)](https://user-images.githubusercontent.com/79650580/142614368-5fdc7880-c7b8-42cb-9f8e-41f32a3fab99.gif)
-
+ Add Note | Edit Note | Delete Note | Search Note
+------------ | ------------- | ------------- | -------------
+![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/79650580/142613895-d834e20d-75c7-4020-9a3f-5a356098827e.gif) | ![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/79650580/142613503-0a824ade-913d-4c39-acc5-52862417b8ff.gif) | ![ezgif com-gif-maker (3)](https://user-images.githubusercontent.com/79650580/142614368-5fdc7880-c7b8-42cb-9f8e-41f32a3fab99.gif) | ![final](https://user-images.githubusercontent.com/79650580/146646653-b48bd451-cb66-4996-9c28-28fa95c00f92.gif)
 
 ### MVVM Architecture
 
