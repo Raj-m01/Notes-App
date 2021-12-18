@@ -3,6 +3,7 @@ package com.example.notes;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,8 +15,10 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -28,14 +31,16 @@ public class MainActivity extends AppCompatActivity {
 
     private static notesViewModel myViewModel;
     FloatingActionButton floatingActionButton;
-    public static RelativeLayout relativeLayout;
     ActivityResultLauncher<Intent> activityResultLauncher;
     ImageView delete;
+    customAdapter customadapter;
     static AlertDialog.Builder builder;
     boolean wantEdit = false;
 
 
-        @Override
+
+
+    @Override
         protected void onCreate(Bundle savedInstanceState) {
 
             super.onCreate(savedInstanceState);
@@ -43,24 +48,18 @@ public class MainActivity extends AppCompatActivity {
 
             floatingActionButton = findViewById(R.id.add_fab);
             delete = findViewById(R.id.delete);
-            relativeLayout = findViewById(R.id.relativeLayout);
             RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list_container);
+            builder = new AlertDialog.Builder(this);
 
-            customAdapter customadapter = new customAdapter();
+
+            customadapter = new customAdapter();
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
             recyclerView.setAdapter(customadapter);
 
-            myViewModel = new ViewModelProvider(this).get(notesViewModel.class);
-            myViewModel.getAllNotes().observe(this, new Observer<List<notesEn>>() {
-                @Override
-                public void onChanged(List<notesEn> notesEns) {
 
-                    customadapter.setNotesData(notesEns);
-
-                }
-            });
+            displayNotes();
 
 
             // start activity for result(new method)
@@ -127,62 +126,133 @@ public class MainActivity extends AppCompatActivity {
                     activityResultLauncher.launch(intent1);
                 }
             });
-            builder = new AlertDialog.Builder(this);
+
+
+
+
 
         }
 
+        private void displayNotes(){
 
-    public static void deleteNote(notesEn note) {
+            myViewModel = new ViewModelProvider(this).get(notesViewModel.class);
 
-        builder.setMessage("Do you want to delete this note ? ").setTitle("Delete Note")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        myViewModel.deleteNote(note);
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+            myViewModel.getAllNotes().observe(this, new Observer<List<notesEn>>() {
+                @Override
+                public void onChanged(List<notesEn> notesEns) {
+                    customadapter.setNotesData(notesEns);
+                }
+            });
+        }
 
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        private void getSearchedNote(String text){
 
-    }
+            String stext = "%"+text+"%";
 
+            myViewModel.search(stext).observe(MainActivity.this, new Observer<List<notesEn>>() {
+                @Override
+                public void onChanged(List<notesEn> notesEns) {
+
+                    if(notesEns==null) return;
+
+                    customadapter.setNotesData(notesEns);
+                }
+            });
+
+
+
+        }
+
+        public static void deleteNote(notesEn note) {
+
+            builder.setMessage("Do you want to delete this note ? ").setTitle("Delete Note")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            myViewModel.deleteNote(note);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+
+        }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
+            getMenuInflater().inflate(R.menu.main_menu,menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-    public void onComposeAction(MenuItem menuItem) {
-        // handle click here
-        builder.setMessage("Do you want to delete All note ? ").setTitle("Delete Note")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        myViewModel.deleteAllNotes();
-                        Toast.makeText(MainActivity.this, "Notes Deleted.  ", Toast.LENGTH_SHORT).show();
+            switch (item.getItemId()){
 
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
 
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+                case R.id.delete_note:
+                    Log.d("check sel","del");
+
+                    builder.setMessage("Do you want to delete All note ? ").setTitle("Delete Note")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    myViewModel.deleteAllNotes();
+                                    Toast.makeText(MainActivity.this, "Notes Deleted.  ", Toast.LENGTH_SHORT).show();
+
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                    return true;
+
+                case R.id.searchview:
+
+                    final SearchView searchView = (SearchView) item.getActionView();
+                    searchView.setQueryHint("Search Note by Note Title");
+
+                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                        @Override
+                        public boolean onQueryTextSubmit(String query) {
+
+                            if(query.trim()!=null){
+                                getSearchedNote(query.trim());
+                            }
+
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onQueryTextChange(String newText) {
+
+                            if(newText.trim()!=null){
+                                getSearchedNote(newText.trim());
+                            }
+
+                            return true;
+                        }
+                    });
+                    return true;
+
+                default : return super.onOptionsItemSelected(item);
+
+            }
 
     }
+
 
 
 }

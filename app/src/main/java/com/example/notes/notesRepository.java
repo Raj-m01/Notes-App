@@ -62,4 +62,14 @@ public class notesRepository {
 
     }
 
+    LiveData<List<notesEn>> searchNote(String searchText){
+
+//        notesDatabase.databaseWriteExecutor.execute(() -> {
+//
+//
+//        });
+
+        return myNotesDao.search(searchText);
+    }
+
 }

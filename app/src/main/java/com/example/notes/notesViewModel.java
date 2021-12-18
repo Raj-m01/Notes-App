@@ -47,4 +47,9 @@ public class notesViewModel extends AndroidViewModel {
 
     }
 
+    public  LiveData<List<notesEn>> search(String searchText){
+
+        return myRepo.searchNote(searchText);
+    }
+
 }
