@@ -27,6 +27,7 @@ public class customAdapter extends RecyclerView.Adapter<customAdapter.ViewHolder
 
     public void setNotesData(List<notesEn> notesData){
 
+        this.notesData.clear();
         this.notesData = notesData;
         notifyDataSetChanged();
     }

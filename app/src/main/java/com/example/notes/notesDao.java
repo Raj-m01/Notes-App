@@ -30,4 +30,7 @@ public interface notesDao {
     @Update
     void update(notesEn note);
 
+    @Query("SELECT * FROM notes_table WHERE notesText OR notesTitle LIKE :searchText")
+    LiveData<List<notesEn>> search(String searchText);
+
 }
