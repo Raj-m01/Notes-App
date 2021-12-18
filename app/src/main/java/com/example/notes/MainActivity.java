@@ -59,7 +59,14 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setAdapter(customadapter);
 
 
-            displayNotes();
+            myViewModel = new ViewModelProvider(this).get(notesViewModel.class);
+
+            myViewModel.getAllNotes().observe(this, new Observer<List<notesEn>>() {
+                @Override
+                public void onChanged(List<notesEn> notesEns) {
+                    customadapter.setNotesData(notesEns);
+                }
+            });
 
 
             // start activity for result(new method)
@@ -127,22 +134,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-
-
-
-
-        }
-
-        private void displayNotes(){
-
-            myViewModel = new ViewModelProvider(this).get(notesViewModel.class);
-
-            myViewModel.getAllNotes().observe(this, new Observer<List<notesEn>>() {
-                @Override
-                public void onChanged(List<notesEn> notesEns) {
-                    customadapter.setNotesData(notesEns);
-                }
-            });
         }
 
         private void getSearchedNote(String text){
